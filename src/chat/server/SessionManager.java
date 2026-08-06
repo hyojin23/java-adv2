@@ -1,7 +1,10 @@
 package chat.server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static util.MyLogger.log;
 
 public class SessionManager {
 
@@ -22,6 +25,23 @@ public class SessionManager {
         sessions.clear();
     }
 
-    public synchronized void sendAll(String received) {
+    public synchronized void sendAll(String message) {
+        for (Session session : sessions) {
+            try {
+                session.send(message);
+            } catch (IOException e) {
+                log(e);
+            }
+        }
+    }
+
+    public synchronized List<String> getAllUsername() {
+        ArrayList<String> usernames = new ArrayList<>();
+        for (Session session : sessions) {
+            if (session.getUsername() != null) {
+                usernames.add(session.getUsername());
+            }
+        }
+        return usernames;
     }
 }
